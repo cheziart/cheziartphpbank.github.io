@@ -23,11 +23,12 @@ else {
         '50' => 10,
         '20' => 20,
         '10' => 10,
-        '5' => 200];
+        '5' => 20];
 }
 $quantity = 0;
 $message = '';
 $withdrawMoney = 0;
+$result = array();
 $multi = ($data['5']*5)+($data['10']*10)+($data['20']*20)+($data['50']*50)+($data['100']*100)+($data['200']*200)+($data['500']*500);
 $money = $_POST["money"] ? $_POST["money"] :0;
 $err = '';
@@ -44,10 +45,32 @@ if ($money >= $multi) {
 if (!is_int($money/5)) {
     $err = $err . "Сума повинна бути кратна 5<br>";
 }
+
 if ($err != '') {
     echo $err;
     echo '<a href="index.php">Back</a>';
     die();
+}
+foreach ($data as $key => $value) {
+    denomination($money, $data, $key, $quantity, $message, $withdrawMoney);
+    $result[$key] = $message;
+    $message = '';
+    $quantity = 0;
+}
+
+$handle = fopen('data.json', 'wb');
+$str = json_encode($data);
+fwrite($handle, $str);
+fclose($handle);
+
+if ($withdrawMoney === 0) {
+    echo "<h3>В банкоматі немає в найвності купюр для видачі даної суми</h3>";
+} else {
+    echo "<p>З рахунку знято:</p>";
+    foreach ($result as $key => $value) {
+        echo "<p>$value</p>";
+    }
+    echo "<h3>Разом $withdrawMoney у.о,</h3>";
 }
 
 function denomination(&$money, &$data, $faceValue, &$quantity, &$message, &$withdrawMoney) {
@@ -67,50 +90,12 @@ function denomination(&$money, &$data, $faceValue, &$quantity, &$message, &$with
         }
     }
 }
-
-denomination($money, $data, 500, $quantity, $message, $withdrawMoney);
-$fiveHundred = $message;
-$message = '';
-$quantity = 0;
-denomination($money, $data, 200, $quantity, $message, $withdrawMoney);
-$twoHundred = $message;
-$quantity = 0;
-$message = '';
-denomination($money, $data, 100, $quantity, $message, $withdrawMoney);
-$oneHundred = $message;
-$quantity = 0;
-$message = '';
-denomination($money, $data, 50, $quantity, $message, $withdrawMoney);
-$fifty = $message;
-$quantity = 0;
-$message = '';
-denomination($money, $data, 20, $quantity, $message, $withdrawMoney);
-$twenty = $message;
-$quantity = 0;
-$message = '';
-denomination($money, $data, 10, $quantity, $message, $withdrawMoney);
-$ten = $message;
-$quantity = 0;
-$message = '';
-denomination($money, $data, 5, $quantity, $message, $withdrawMoney);
-$five = $message;
-$quantity = 0;
-$message = '';
-$multi = ($data['5']*5)+($data['10']*10)+($data['20']*20)+($data['50']*50)+($data['100']*100)+($data['200']*200)+($data['500']*500);
-$handle = fopen('data.json', 'wb');
-$str = json_encode($data);
-fwrite($handle, $str);
-fclose($handle);
-echo "<h3>З рахунку знято $fiveHundred $twoHundred $oneHundred $fifty $twenty"
-    . "$ten $five разом $withdrawMoney у.о,</h3>";
 include "answer.php";
 printTable($data);
 ?>
-
-
-
 
 <br>
 <a href="index.php">Back</a>
 </div>
 </body>
+
