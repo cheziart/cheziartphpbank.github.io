@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 60vw;
+    margin: 10vw auto;
+    padding: 20px 0;
+    border: 2px solid darkblue;
+    text-align: center;
+}
+
+table {
+    width: 40vw;
+    margin: 2vw auto;
+    border: 1px solid darkblue;
+}
+
+.button {
+    background-color: blue;
+    border: none;
+}
+
+.button:hover {
+    background-color: cyan;
+}
