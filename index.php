@@ -34,6 +34,7 @@ if (file_exists("data.json")) {
 include "answer.php";
 printTable($data);
 ?>
+    
 </div>
 </body>
 </html>
