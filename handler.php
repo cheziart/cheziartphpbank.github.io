@@ -46,7 +46,7 @@ if ($money < 5) {
     $err = $err . "Мінімальна сума для видачі 5 грн<br>";
 }
 
-if ($money >= $multi) {
+if ($money > $multi) {
     $err = $err . "Введеної суми немає в наявності, ви можете зняти в межах цієї суми $multi<br>";
 }
 if (!is_int($money/5)) {
