@@ -10,26 +10,15 @@
 </head>
 <body><div class="container">
 <?php
-if (file_exists("data.json")) {
-    $handle = fopen('data.json', 'rb');
-    $str = fread($handle, filesize('data.json'));
-    fclose($handle);
-    $data = json_decode($str,true);
-}
-else {
-    $data = ['500' => 10,
-        '200' => 20,
-        '100' => 10,
-        '50' => 10,
-        '20' => 20,
-        '10' => 10,
-        '5' => 20];
-}
+$data = array();
+include_once "funcdata.php";
+jsonData($data);
 $quantity = 0;
 $message = '';
 $withdrawMoney = 0;
 $result = array();
-$multi = ($data['5']*5)+($data['10']*10)+($data['20']*20)+($data['50']*50)+($data['100']*100)+($data['200']*200)+($data['500']*500);
+$multi = 0;
+multiData($data,$multi);
 $money = $_POST["money"] ? $_POST["money"] :0;
 
 $moneyErr = $_POST["money"] ? $_POST["money"] :0;
@@ -41,20 +30,14 @@ foreach ($data as $key => $value) {
 $err = '';
 if (filter_var($money, FILTER_VALIDATE_INT) == false && $money != '0') {
     $err = $err . "Введіть значення необхідної суми<br>";
-}
-if ($money < 5) {
+}else if ($money < 5) {
     $err = $err . "Мінімальна сума для видачі 5 грн<br>";
-}
-
-if ($money > $multi) {
-    $err = $err . "Введеної суми немає в наявності, ви можете зняти в межах цієї суми $multi<br>";
-}
-if (!is_int($money/5)) {
+}else if (!is_int($money/5)) {
     $err = $err . "Сума повинна бути кратна 5<br>";
-}
-
-if ($moneyErr!==0) {
+}else if ($moneyErr!==0) {
     $err = $err ."В банкоматі немає в найвності купюр для видачі даної суми";
+}else if ($money > $multi) {
+    $err = $err . "Введеної суми немає в наявності, ви можете зняти в межах цієї суми $multi<br>";
 }
 if ($err != '') {
     echo $err;
@@ -109,6 +92,12 @@ function denominationErr(&$moneyErr, $data, $faceValue) {
             $data[$num]--;
             denominationErr($moneyErr, $data, $faceValue);
         }
+    }
+}
+
+function multiData($data, &$multi) {
+    foreach ($data as $key => $value) {
+        $multi += ((int)$key*(int)$value);
     }
 }
 
