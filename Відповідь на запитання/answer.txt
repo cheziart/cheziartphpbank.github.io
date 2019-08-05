@@ -8,11 +8,12 @@ WHERE age>40;
 SELECT name FROM users
 WHERE age<40 AND age>20;
 4. Складіть запит для отримання усіх користувачів, на рахунку яких більше 1000 (незалежно від валюти), до результату додати цей баланс
-SELECT user_id, balance FROM accounts
+SELECT users.name, accounts.balance FROM accounts
+RIGHT JOIN users ON accounts.user_id = users.id
 WHERE balance>1000;
 5. Складіть запит для отримання історії транзакцій, згрупувати по терміналам та вивести загальну суму, зняту з кожного терміналу, додати модель терміналу
-SELECT cashbox.id, cashbox.city, cashboxes.model, SUM(logs.amount) AS Sumterm FROM logs GROUP BY cashbox.id
-RIGHT JOIN cashboxes ON logs.cashbox_id = cashbox.id
+SELECT cashboxes.id, cashboxes.city, cashboxes.model, SUM(logs.amount) AS Sumterm FROM logs 
+RIGHT JOIN cashboxes ON logs.cashbox_id = cashboxes.id GROUP BY cashboxes.id
 ORDER BY logs.id;
 6. Складіть запит для отримання суми на балансі кожного терміналу (загальна сума коштів у терміналі)
-SELECT cashbox.id, SUM(value*quantity) AS Summoney FROM amounts GROUP BY cashbox.id
+SELECT cashbox_id, SUM(value*quantity) AS Summoney FROM amounts GROUP BY cashbox_id
